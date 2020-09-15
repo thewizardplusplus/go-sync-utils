@@ -1,6 +1,13 @@
 package syncutils
 
-// MultiWaitGroup ...
+// MultiWaitGroup allows operating with a set of WaitGroup interfaces
+// as a whole. It sequentially calls corresponding methods on each interface
+// in the set in the same order in which interfaces are presented.
+//
+// It might be useful for the simultaneous use of the sync.WaitGroup object
+// and its mock. Attention! In this case, the real object must go last to avoid
+// data races.
+//
 type MultiWaitGroup []WaitGroup
 
 // Add ...
