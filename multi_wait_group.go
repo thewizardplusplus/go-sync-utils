@@ -10,21 +10,24 @@ package syncutils
 //
 type MultiWaitGroup []WaitGroup
 
-// Add ...
+// Add sequentially calls the method of the same name on each interface
+// in the set in the same order in which interfaces are presented.
 func (waitGroups MultiWaitGroup) Add(delta int) {
 	for _, waitGroup := range waitGroups {
 		waitGroup.Add(delta)
 	}
 }
 
-// Done ...
+// Done sequentially calls the method of the same name on each interface
+// in the set in the same order in which interfaces are presented.
 func (waitGroups MultiWaitGroup) Done() {
 	for _, waitGroup := range waitGroups {
 		waitGroup.Done()
 	}
 }
 
-// Wait ...
+// Wait sequentially calls the method of the same name on each interface
+// in the set in the same order in which interfaces are presented.
 func (waitGroups MultiWaitGroup) Wait() {
 	for _, waitGroup := range waitGroups {
 		waitGroup.Wait()
