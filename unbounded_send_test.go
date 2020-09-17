@@ -18,7 +18,22 @@ func TestUnboundedSend(test *testing.T) {
 		args     args
 		wantData interface{}
 	}{
-		// TODO: Add test cases.
+		{
+			name: "buffered channel",
+			args: args{
+				channel: make(chan int, 1),
+				data:    23,
+			},
+			wantData: 23,
+		},
+		{
+			name: "unbuffered channel",
+			args: args{
+				channel: make(chan int),
+				data:    23,
+			},
+			wantData: 23,
+		},
 	} {
 		test.Run(data.name, func(test *testing.T) {
 			UnboundedSend(data.args.channel, data.args.data)
