@@ -10,7 +10,8 @@ The library that provides utility entities for syncing.
 ## Features
 
 - interface of the `sync.WaitGroup` type;
-- operating with a set of such interfaces as a whole.
+- operating with a set of such interfaces as a whole;
+- sending to a channel without blocking even if the channel is busy.
 
 ## Installation
 
