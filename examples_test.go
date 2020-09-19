@@ -76,3 +76,27 @@ func ExampleMultiWaitGroup() {
 	// Done()
 	// Wait()
 }
+
+func ExampleUnboundedSend() {
+	numbers := make(chan int, 2)
+	for number := 0; number < 10; number++ {
+		syncutils.UnboundedSend(numbers, number)
+	}
+
+	for index := 0; index < 10; index++ {
+		number := <-numbers
+		fmt.Println(number)
+	}
+
+	// Unordered output:
+	// 0
+	// 1
+	// 2
+	// 3
+	// 4
+	// 5
+	// 6
+	// 7
+	// 8
+	// 9
+}

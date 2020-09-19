@@ -119,6 +119,42 @@ func main() {
 }
 ```
 
+`syncutils.UnboundedSend`:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	syncutils "github.com/thewizardplusplus/go-sync-utils"
+)
+
+func main() {
+	numbers := make(chan int, 2)
+	for number := 0; number < 10; number++ {
+		syncutils.UnboundedSend(numbers, number)
+	}
+
+	for index := 0; index < 10; index++ {
+		number := <-numbers
+		fmt.Println(number)
+	}
+
+	// Unordered output:
+	// 0
+	// 1
+	// 2
+	// 3
+	// 4
+	// 5
+	// 6
+	// 7
+	// 8
+	// 9
+}
+```
+
 ## License
 
 The MIT License (MIT)
