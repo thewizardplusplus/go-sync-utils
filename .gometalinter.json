@@ -3,5 +3,5 @@
   "Test": true,
   "Skip": ["docs"],
   "EnableAll": true,
-  "Disable": ["dupl", "gocyclo"]
+  "Disable": ["dupl", "gocyclo", "maligned"]
 }
