@@ -156,6 +156,64 @@ func main() {
 }
 ```
 
+`syncutils.ConcurrentHandler`:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"runtime"
+	"sync"
+
+	syncutils "github.com/thewizardplusplus/go-sync-utils"
+)
+
+type Handler struct {
+	Locker    sync.Mutex
+	DataGroup []interface{}
+}
+
+func (handler *Handler) Handle(ctx context.Context, data interface{}) {
+	handler.Locker.Lock()
+	defer handler.Locker.Unlock()
+
+	handler.DataGroup = append(handler.DataGroup, data)
+}
+
+func main() {
+	// start the data handling
+	var innerHandler Handler
+	concurrentHandler := syncutils.NewConcurrentHandler(1000, &innerHandler)
+	go concurrentHandler.StartConcurrently(context.Background(), runtime.NumCPU())
+
+	// handle the data
+	for index := 0; index < 10; index++ {
+		data := fmt.Sprintf("data #%d", index)
+		concurrentHandler.Handle(data)
+	}
+	concurrentHandler.Stop()
+
+	// print the handled data
+	for _, data := range innerHandler.DataGroup {
+		fmt.Println(data)
+	}
+
+	// Unordered output:
+	// data #0
+	// data #1
+	// data #2
+	// data #3
+	// data #4
+	// data #5
+	// data #6
+	// data #7
+	// data #8
+	// data #9
+}
+```
+
 ## License
 
 The MIT License (MIT)
