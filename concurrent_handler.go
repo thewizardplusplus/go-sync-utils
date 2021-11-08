@@ -7,12 +7,13 @@ import (
 
 //go:generate mockery --name=Handler --inpackage --case=underscore --testonly
 
-// Handler ...
+// Handler represents the interface of an abstract handler.
 type Handler interface {
 	Handle(ctx context.Context, data interface{})
 }
 
-// ConcurrentHandler ...
+// ConcurrentHandler wraps an abstract handler and allows to call it
+// concurrently.
 type ConcurrentHandler struct {
 	dataChannel  chan interface{}
 	innerHandler Handler
@@ -22,7 +23,9 @@ type ConcurrentHandler struct {
 	stoppingCtxCanceller context.CancelFunc
 }
 
-// NewConcurrentHandler ...
+// NewConcurrentHandler creates a concurrent wrapper for the passed abstract
+// handler. The buffer size specifies the capacity of the inner channel used
+// for passing data to the inner handler.
 func NewConcurrentHandler(
 	bufferSize int,
 	innerHandler Handler,
@@ -38,12 +41,15 @@ func NewConcurrentHandler(
 	}
 }
 
-// Handle ...
+// Handle sends the passed data to the inner handler via the inner channel.
+// This method does not block the execution flow.
 func (handler ConcurrentHandler) Handle(data interface{}) {
 	handler.dataChannel <- data
 }
 
-// Start ...
+// Start processes data from the inner channel by the inner handler. This method
+// performs the processing directly in the caller goroutine and blocks
+// the execution flow until the processing will be stopped.
 func (handler ConcurrentHandler) Start(ctx context.Context) {
 	handler.basicStart(started, func() {
 		for data := range handler.dataChannel {
@@ -52,7 +58,10 @@ func (handler ConcurrentHandler) Start(ctx context.Context) {
 	})
 }
 
-// StartConcurrently ...
+// StartConcurrently processes data from the inner channel by the inner handler.
+// This method performs the processing in a goroutine pool (the concurrency
+// factor specifies goroutine count in the pool). Regardless, it blocks
+// the execution flow anyway until the processing will be stopped.
 func (handler ConcurrentHandler) StartConcurrently(
 	ctx context.Context,
 	concurrencyFactor int,
@@ -73,7 +82,10 @@ func (handler ConcurrentHandler) StartConcurrently(
 	})
 }
 
-// Stop ...
+// Stop interrupts the processing data from the inner channel by the inner
+// handler. This method can be called after both the Start()
+// and StartConcurrently() methods. This method blocks the execution flow
+// until the interrupting will be completed.
 func (handler ConcurrentHandler) Stop() {
 	close(handler.dataChannel)
 	<-handler.stoppingCtx.Done()
