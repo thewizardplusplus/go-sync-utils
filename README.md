@@ -9,9 +9,17 @@ The library that provides utility entities for syncing.
 
 ## Features
 
-- interface of the `sync.WaitGroup` type;
-- operating with a set of such interfaces as a whole;
-- sending to a channel without blocking even if the channel is busy.
+- utility entities for the `sync.WaitGroup` type:
+  - interface of the `sync.WaitGroup` type;
+  - operating with a set of such interfaces as a whole;
+- sending to a channel without blocking even if the channel is busy;
+- wrapper for an abstract handler allowed to call it concurrently:
+  - starting:
+    - start in the caller goroutine;
+    - start in a goroutine pool;
+  - stopping:
+    - can be called after both kinds of the starting;
+    - blocks the execution flow until the stopping will be completed.
 
 ## Installation
 
